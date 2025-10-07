@@ -24,10 +24,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "API Visualizer",
-  description: "Understand APIs Like Never Before.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "API Visualizer",
+    description: "Understand APIs Like Never Before.",
+  };
+}
 
 export default function RootLayout({
   children,
@@ -40,11 +42,12 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider delayDuration={200}>
           <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-            <nav className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
+            <nav className="px-6 h-16 flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <Link href="/" className="font-semibold tracking-tight">API Visualizer</Link>
                 <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
                   <Link href="/tool">Tool</Link>
+                  <Link href="/tester">Tester</Link>
                   <Link href="/docs">Docs</Link>
                   <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
                 </div>
@@ -59,7 +62,7 @@ export default function RootLayout({
           <CommandPalette />
           <footer className="mt-16">
             <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            <div className="mx-auto max-w-6xl px-6 py-12">
+            <div className="px-6 py-12 w-full">
               <div className="grid gap-10 md:grid-cols-3">
                 <div>
                   <div className="text-lg font-semibold">API Visualizer</div>
@@ -99,7 +102,7 @@ export default function RootLayout({
                 </div>
               </div>
               <Separator className="my-8" />
-              <div className="flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground gap-4">
+              <div className="flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground gap-4 w-full">
                 <p>© 2025 API Visualizer. All rights reserved.</p>
                 <div className="flex items-center gap-4">
                   <a className="hover:text-foreground" href="/terms">Terms</a>

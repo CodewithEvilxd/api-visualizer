@@ -21,6 +21,7 @@ export function NavbarMobile() {
           <nav className="mt-6 grid gap-3">
             <Link href="/">Home</Link>
             <Link href="/tool">Tool</Link>
+            <Link href="/tester">Tester</Link>
             <Link href="/docs">Docs</Link>
             <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
           </nav>
