@@ -1,6 +1,30 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
+interface ApiResponse {
+  status?: number;
+  statusText?: string;
+  timeMs?: number;
+  size?: number;
+  headers?: Record<string, string>;
+  body?: string;
+  error?: string;
+}
+
+interface CollectionAuth {
+  type: string;
+  data: Record<string, unknown>;
+}
+
+interface TestResult {
+  name?: string;
+  result?: ApiResponse;
+  error?: string;
+  iteration?: number;
+  data?: unknown;
+  response?: ApiResponse | null;
+}
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +45,7 @@ export function ApiTester() {
   const [body, setBody] = useState(`{
   "title": "hello"
 }`);
-  const [resp, setResp] = useState<{ status?: number; statusText?: string; timeMs?: number; size?: number; headers?: Record<string,string>; body?: string; error?: string } | null>(null);
+  const [resp, setResp] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiQuestion, setAiQuestion] = useState("");
@@ -72,7 +96,7 @@ export function ApiTester() {
   const [followRedirects, setFollowRedirects] = useState(true);
   const [proxyUrl, setProxyUrl] = useState("");
   const [retryCount, setRetryCount] = useState(0);
-  const [collectionAuth, setCollectionAuth] = useState<{ type: string; data: any }>({ type: "None", data: {} });
+  const [collectionAuth, setCollectionAuth] = useState<CollectionAuth>({ type: "None", data: {} });
   const [collectionHeaders, setCollectionHeaders] = useState(`{
     "User-Agent": "API Visualizer"
   }`);
@@ -213,7 +237,7 @@ export function ApiTester() {
     return vars;
   }
 
-  async function runTestScript(resp: any, vars: Record<string, string>) {
+  async function runTestScript(resp: ApiResponse | null, vars: Record<string, string>) {
     if (!testScript.trim()) return;
     try {
       const func = new Function('pm', 'vars', 'response', testScript);
@@ -226,12 +250,12 @@ export function ApiTester() {
             console.log(`✗ ${name}: ${e}`);
           }
         },
-        expect: (val: any) => ({
+        expect: (val: unknown) => ({
           to: {
             be: {
-              oneOf: (arr: any[]) => arr.includes(val),
-              greaterThan: (n: number) => val > n,
-              lessThan: (n: number) => val < n
+              oneOf: (arr: unknown[]) => arr.includes(val),
+              greaterThan: (n: number) => (val as number) > n,
+              lessThan: (n: number) => (val as number) < n
             },
             have: {
               status: (code: number) => val === code,
@@ -255,7 +279,7 @@ export function ApiTester() {
     const coll = collections.find(c => c.name === currentCollection);
     if (!coll) return;
 
-    const results: any[] = [];
+    const results: TestResult[] = [];
     for (const req of coll.requests) {
       try {
         const parsed = JSON.parse(req.data);
@@ -295,7 +319,7 @@ export function ApiTester() {
 
   async function runWithData() {
     const data = JSON.parse(runnerData || "[]");
-    const results: any[] = [];
+    const results: TestResult[] = [];
 
     for (let i = 0; i < Math.min(runnerIterations, data.length || 1); i++) {
       const iterationData = data[i] || {};
@@ -305,7 +329,7 @@ export function ApiTester() {
       vars = await runPreRequestScript(vars);
 
       // Send request with retries
-      let lastResp: any = null;
+      let lastResp: ApiResponse | null = null;
       for (let attempt = 0; attempt <= retryCount; attempt++) {
         try {
           const parsedVars = vars;
@@ -482,7 +506,7 @@ export function ApiTester() {
                   try {
                     const r = await fetch("/api/requests");
                     const data = await r.json();
-                    const list = (data.items || []).map((d: any) => ({ name: d.name, data: d.data }));
+                    const list = (data.items || []).map((d: { name: string; data: string }) => ({ name: d.name, data: d.data }));
                     setSavedList(list);
                   } catch {}
                 }} className="text-xs">Refresh</DropdownMenuItem>
@@ -525,7 +549,7 @@ export function ApiTester() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {["json","raw","urlencoded","graphql"].map((m) => (
-                      <DropdownMenuItem key={m} onSelect={() => setBodyMode(m as any)}>{m}</DropdownMenuItem>
+                      <DropdownMenuItem key={m} onSelect={() => setBodyMode(m as "json" | "raw" | "urlencoded" | "graphql")}>{m}</DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -564,7 +588,7 @@ export function ApiTester() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {["None","Bearer","API Key","Basic"].map(t => (
-                        <DropdownMenuItem key={t} onSelect={() => setAuthType(t as any)}>{t}</DropdownMenuItem>
+                        <DropdownMenuItem key={t} onSelect={() => setAuthType(t as "None" | "Bearer" | "API Key" | "Basic")}>{t}</DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -622,18 +646,18 @@ export function ApiTester() {
                       <option value="Basic">Basic Auth</option>
                     </select>
                     {collectionAuth.type === "Bearer" && (
-                      <Input value={collectionAuth.data.token || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { token: e.target.value } })} placeholder="Bearer token" className="rounded-xl" />
+                      <Input value={(collectionAuth.data.token as string) || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { token: e.target.value } })} placeholder="Bearer token" className="rounded-xl" />
                     )}
                     {collectionAuth.type === "API Key" && (
                       <div className="flex gap-2">
-                        <Input value={collectionAuth.data.key || "X-API-Key"} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, key: e.target.value } })} placeholder="Header name" className="rounded-xl" />
-                        <Input value={collectionAuth.data.value || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, value: e.target.value } })} placeholder="API key value" className="rounded-xl" />
+                        <Input value={(collectionAuth.data.key as string) || "X-API-Key"} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, key: e.target.value } })} placeholder="Header name" className="rounded-xl" />
+                        <Input value={(collectionAuth.data.value as string) || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, value: e.target.value } })} placeholder="API key value" className="rounded-xl" />
                       </div>
                     )}
                     {collectionAuth.type === "Basic" && (
                       <div className="flex gap-2">
-                        <Input value={collectionAuth.data.user || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, user: e.target.value } })} placeholder="Username" className="rounded-xl" />
-                        <Input value={collectionAuth.data.pass || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, pass: e.target.value } })} type="password" placeholder="Password" className="rounded-xl" />
+                        <Input value={(collectionAuth.data.user as string) || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, user: e.target.value } })} placeholder="Username" className="rounded-xl" />
+                        <Input value={(collectionAuth.data.pass as string) || ""} onChange={(e) => setCollectionAuth({ ...collectionAuth, data: { ...collectionAuth.data, pass: e.target.value } })} type="password" placeholder="Password" className="rounded-xl" />
                       </div>
                     )}
                   </div>
