@@ -92,9 +92,9 @@ export default function RootLayout({
                 <div>
                   <div className="text-sm font-medium">Subscribe to updates</div>
                   <p className="mt-2 text-sm text-muted-foreground">Get release notes and tips. No spam.</p>
-                  <div className="mt-4 flex items-center gap-2">
+                  <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <Input type="email" placeholder="you@devmail.com" className="rounded-xl" />
-                    <Button type="button" className="rounded-xl">Subscribe</Button>
+                    <Button type="button" className="rounded-xl w-full sm:w-auto">Subscribe</Button>
                   </div>
                 </div>
               </div>

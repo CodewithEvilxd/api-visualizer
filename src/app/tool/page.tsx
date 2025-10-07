@@ -81,7 +81,7 @@ export default function ToolPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
         <Card className="rounded-2xl">
           <CardContent className="pt-6">
             <div className="flex justify-between items-center mb-3">
