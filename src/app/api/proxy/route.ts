@@ -12,7 +12,7 @@ type ProxyRequest = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { url, method = "GET", headers = {}, body, timeout = 30000, followRedirects = true, proxy }: ProxyRequest = await req.json();
+    const { url, method = "GET", headers = {}, body, timeout = 30000, followRedirects = true }: ProxyRequest = await req.json();
 
     try {
       const parsed = new URL(url);

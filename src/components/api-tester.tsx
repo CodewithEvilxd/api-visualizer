@@ -34,7 +34,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ClipboardCopy, Trash2, Send, ChevronDown, Save as SaveIcon, History, Folder, Play, Settings, Code } from "lucide-react";
+import { ClipboardCopy, Trash2, Send, ChevronDown, Save as SaveIcon, History, Folder, Play } from "lucide-react";
 
 export function ApiTester() {
   const [method, setMethod] = useState<"GET" | "POST" | "PUT" | "PATCH" | "DELETE">("GET");
