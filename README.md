@@ -39,7 +39,7 @@ Visit the live demo at [https://api-visualizer-demo.vercel.app](https://api-visu
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/codewithevilxd/api-visualizer.git
+   git clone https://github.com/CodewithEvilxd/api-visualizer.git
    cd api-visualizer
    ```
 
@@ -150,8 +150,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **GitHub**: [@codewithevilxd](https://github.com/codewithevilxd)
-- **Project Repository**: [https://github.com/codewithevilxd/api-visualizer](https://github.com/codewithevilxd/api-visualizer)
+- **GitHub**: [@CodewithEvilxd](https://github.com/codewithevilxd)
+- **Project Repository**: [https://github.com/CodewithEvilxd/api-visualizer](https://github.com/CodewithEvilxd/api-visualizer)
 
 ---
 

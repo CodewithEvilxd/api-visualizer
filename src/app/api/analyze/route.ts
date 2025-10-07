@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const systemPrompt = `You are an expert API analyst. Given an API response (JSON/XML/Raw) and an optional user question:
     - Briefly describe what this API likely does and useful use-cases.
